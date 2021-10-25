@@ -9,6 +9,7 @@ pygame.init()
 
 WIDTH, HEIGHT = 800, 500
 FPS = 60
+CARDPOS_X, CARDPOS_Y = 50, 300
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BlackJack")
 clock = pygame.time.Clock()
@@ -45,8 +46,7 @@ def dealer_setup():
 		pygame.image.load(os.path.join(cards_path, f'card{faceup["suit"]}{rank}.png')),
 		(550, 10),
 	)
-	return hidden
-
+	return hidden, faceup
 
 def get_rank(card):
 	
@@ -64,9 +64,13 @@ def get_rank(card):
 		return rank
 	rank = card['rank']
 	return rank
-
-
-hidden = dealer_setup()
+def rank_from_card(card):
+	rank = get_rank(card)
+	if rank in ('J', "Q", "K"):
+		return 10
+	else:
+		return card['rank']
+hidden, faceup = dealer_setup()
 h_key = K_h
 score = 0
 while True:
@@ -75,7 +79,7 @@ while True:
 			pygame.quit()
 			sys.exit(0)
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_q:
+			if event.key == pygame.K_q or event.key == K_ESCAPE:
 				pygame.quit()
 				sys.exit()
 			if event.key == K_l:
@@ -83,26 +87,30 @@ while True:
 				pygame.display.flip()
 			if event.key == h_key:
 				card = random.choice(deck)
+				while card in drawn_cards:
+					card = random.choice(deck)
 				try:
 					score += int(get_rank(card))
 				except ValueError:
-					rank = get_rank(card)
-					if rank in ('J', 'Q', 'K'): score += 10
-					# if rank == 'A': score +=
+					rank = rank_from_card(card)
+					score += rank
+					# TODO: Add checking for Ace 
 				score_text = pygame.font.SysFont("Helvetica", 100)
 				screen_score = score_text.render(str(score), True, (0, 255, 255), (100, 175, 75))
 				screen.blit(screen_score, (10,200))
-				while card in drawn_cards:
-					card = random.choice(deck)
 				drawn_cards.append(card)
 				rank = get_rank(card)
 				screen_card = pygame.image.load(
 					os.path.join(cards_path, f"card{card['suit']}{rank}.png")
 				)
-				screen.blit(screen_card, (300, 300))
+				CARDPOS_X += 150
+				screen.blit(screen_card, (CARDPOS_X, CARDPOS_Y))
 			if event.key == K_s:
+				dealer_val = 0
 				h_key = None
-				rank = get_rank(hidden)
+				hrank = get_rank(hidden)
+				frank = get_rank(faceup)
+				print(hrank, frank)
 				screen.blit(
 					pygame.image.load(
 						os.path.join(cards_path, f'card{hidden["suit"]}{rank}.png')
