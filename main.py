@@ -29,7 +29,8 @@ screen.blit(cardback, (30, 10))
 pygame.display.flip()
 
 drawn_cards = []
-
+player_cards = []
+dealer_cards = []
 
 def dealer_setup():
 	hidden = random.choice(deck)
@@ -68,9 +69,38 @@ def rank_from_card(card):
 	rank = get_rank(card)
 	if rank in ('J', "Q", "K"):
 		return 10
+	elif rank == 'A':
+		if sum(player_cards) < 10:
+			return 11
+		else:
+			return 1
 	else:
 		return card['rank']
+def player_setup(player_card_list:list, cposx):
+	card1 = random.choice(deck)
+	card2 = random.choice(deck)
+	while card1 in drawn_cards:
+		card1 = random.choice(deck)
+	while card2 in drawn_cards:
+		card2 = random.choice(deck)
+	drawn_cards.append(card1)
+	drawn_cards.append(card2)
+	rank1 = get_rank(card1)
+	rank2 = get_rank(card2)
+	cposx += 100
+	screen.blit(
+		pygame.image.load(os.path.join(cards_path, f'card{card1["suit"]}{rank1}.png')),
+		(cposx, CARDPOS_Y),
+	)
+	screen.blit(
+		pygame.image.load(os.path.join(cards_path, f'card{card1["suit"]}{rank2}.png')),
+		(CARDPOS_X, CARDPOS_Y),
+	)
+	player_card_list.append(rank1)
+	player_card_list.append(rank2)
+	return card1,card2
 hidden, faceup = dealer_setup()
+c1, c2 = player_setup(player_cards, CARDPOS_X)
 h_key = K_h
 score = 0
 while True:
@@ -90,11 +120,11 @@ while True:
 				while card in drawn_cards:
 					card = random.choice(deck)
 				try:
-					score += int(get_rank(card))
+					rank = int(get_rank(card))
 				except ValueError:
 					rank = rank_from_card(card)
-					score += rank
-					# TODO: Add checking for Ace card values
+				player_cards.append(rank)
+				score = sum(player_cards)
 				score_text = pygame.font.SysFont("Helvetica", 100)
 				screen_score = score_text.render(str(score), True, (0, 255, 255), (100, 175, 75))
 				screen.blit(screen_score, (10,200))
