@@ -1,5 +1,8 @@
+import os
+import random
+import sys
+
 import pygame
-import sys, random, os
 from pygame.locals import *
 
 pygame.init()
@@ -7,6 +10,7 @@ pygame.init()
 WIDTH, HEIGHT = 800, 500
 FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("BlackJack")
 clock = pygame.time.Clock()
 screen.fill((100, 175, 75))
 pygame.display.flip()
@@ -83,20 +87,15 @@ while True:
 					score += int(get_rank(card))
 				except ValueError:
 					rank = get_rank(card)
-					if rank == 'J': score += 11
-					if rank == 'Q': score += 12
-					if rank == 'K': score += 13 
+					if rank in ('J', 'Q', 'K'): score += 10
+					# if rank == 'A': score +=
 				score_text = pygame.font.SysFont("Helvetica", 100)
-				screen_score = score_text.render(str(score), True, (0, 255, 255)), (10,200)
-				screen.__delattr__(screen_score[0])
-				screen.blit(screen_score)
-				pygame
+				screen_score = score_text.render(str(score), True, (0, 255, 255), (100, 175, 75))
+				screen.blit(screen_score, (10,200))
 				while card in drawn_cards:
 					card = random.choice(deck)
 				drawn_cards.append(card)
 				rank = get_rank(card)
-				print(rank)
-				print(os.path.join(cards_path, f"card{card['suit']}{rank}.png"))
 				screen_card = pygame.image.load(
 					os.path.join(cards_path, f"card{card['suit']}{rank}.png")
 				)
