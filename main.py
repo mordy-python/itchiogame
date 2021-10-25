@@ -94,7 +94,7 @@ while True:
 				except ValueError:
 					rank = rank_from_card(card)
 					score += rank
-					# TODO: Add checking for Ace 
+					# TODO: Add checking for Ace card values
 				score_text = pygame.font.SysFont("Helvetica", 100)
 				screen_score = score_text.render(str(score), True, (0, 255, 255), (100, 175, 75))
 				screen.blit(screen_score, (10,200))
