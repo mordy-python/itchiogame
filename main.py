@@ -1,6 +1,8 @@
 import os
 import random
 import sys
+from tkinter import messagebox
+import tkinter
 
 import pygame
 from pygame.locals import *
@@ -112,8 +114,7 @@ while True:
 				pygame.quit()
 				sys.exit()
 			if event.key == K_l:
-				screen.fill((0, 0, 0))
-				pygame.display.flip()
+				import help
 			if event.key == h_key:
 				card = random.choice(deck)
 				while card in drawn_cards:
