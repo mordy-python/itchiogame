@@ -1,11 +1,12 @@
 import os
 import random
 import sys
-from tkinter import messagebox
-import tkinter
 
 import pygame
 from pygame.locals import *
+
+import help
+del help
 
 pygame.init()
 
@@ -77,7 +78,7 @@ def rank_from_card(card):
 		else:
 			return 1
 	else:
-		return card['rank']
+		return int(card['rank'])
 def player_setup(player_card_list:list):
 	card1 = random.choice(deck)
 	card2 = random.choice(deck)
@@ -87,8 +88,8 @@ def player_setup(player_card_list:list):
 		card2 = random.choice(deck)
 	drawn_cards.append(card1)
 	drawn_cards.append(card2)
-	rank1 = get_rank(card1)
-	rank2 = get_rank(card2)
+	rank1 = rank_from_card(card1)
+	rank2 = rank_from_card(card2)
 	screen.blit(
 		pygame.image.load(os.path.join(cards_path, f'card{card1["suit"]}{rank1}.png')),
 		(50, CARDPOS_Y),
@@ -104,6 +105,9 @@ hidden, faceup = dealer_setup()
 c1, c2 = player_setup(player_cards)
 h_key = K_h
 score = sum(player_cards)
+score_text = pygame.font.SysFont("Helvetica", 100)
+screen_score = score_text.render(str(score), True, (0, 255, 255), (100, 175, 75))
+screen.blit(screen_score, (800,200))
 while True:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -115,6 +119,7 @@ while True:
 				sys.exit()
 			if event.key == K_l:
 				import help
+				del help
 			if event.key == h_key:
 				card = random.choice(deck)
 				while card in drawn_cards:
