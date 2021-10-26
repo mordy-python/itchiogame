@@ -7,9 +7,9 @@ from pygame.locals import *
 
 pygame.init()
 
-WIDTH, HEIGHT = 800, 500
+WIDTH, HEIGHT = 900, 500
 FPS = 60
-CARDPOS_X, CARDPOS_Y = 50, 300
+CARDPOS_X, CARDPOS_Y = 200, 300
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BlackJack")
 clock = pygame.time.Clock()
@@ -76,7 +76,7 @@ def rank_from_card(card):
 			return 1
 	else:
 		return card['rank']
-def player_setup(player_card_list:list, cposx):
+def player_setup(player_card_list:list):
 	card1 = random.choice(deck)
 	card2 = random.choice(deck)
 	while card1 in drawn_cards:
@@ -87,22 +87,21 @@ def player_setup(player_card_list:list, cposx):
 	drawn_cards.append(card2)
 	rank1 = get_rank(card1)
 	rank2 = get_rank(card2)
-	cposx += 100
 	screen.blit(
 		pygame.image.load(os.path.join(cards_path, f'card{card1["suit"]}{rank1}.png')),
-		(cposx, CARDPOS_Y),
+		(50, CARDPOS_Y),
 	)
 	screen.blit(
 		pygame.image.load(os.path.join(cards_path, f'card{card1["suit"]}{rank2}.png')),
-		(CARDPOS_X, CARDPOS_Y),
+		(200, CARDPOS_Y),
 	)
 	player_card_list.append(rank1)
 	player_card_list.append(rank2)
 	return card1,card2
 hidden, faceup = dealer_setup()
-c1, c2 = player_setup(player_cards, CARDPOS_X)
+c1, c2 = player_setup(player_cards)
 h_key = K_h
-score = 0
+score = sum(player_cards)
 while True:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -127,7 +126,7 @@ while True:
 				score = sum(player_cards)
 				score_text = pygame.font.SysFont("Helvetica", 100)
 				screen_score = score_text.render(str(score), True, (0, 255, 255), (100, 175, 75))
-				screen.blit(screen_score, (10,200))
+				screen.blit(screen_score, (800,200))
 				drawn_cards.append(card)
 				rank = get_rank(card)
 				screen_card = pygame.image.load(
