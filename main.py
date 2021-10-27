@@ -35,6 +35,10 @@ drawn_cards = []
 player_cards = []
 dealer_cards = []
 
+def check_bust(score, score_text, h_key):
+	if score > 22:
+		score_text = 'BUST'
+		h_key = None
 def dealer_setup():
 	hidden = random.choice(deck)
 	faceup = random.choice(deck)
@@ -140,6 +144,13 @@ while True:
 				)
 				CARDPOS_X += 150
 				screen.blit(screen_card, (CARDPOS_X, CARDPOS_Y))
+				try:
+					if score > 21:
+						h_key = None
+						import busted
+						del busted
+				except TypeError:
+					pass
 			if event.key == K_s:
 				dealer_val = 0
 				h_key = None
